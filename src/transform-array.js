@@ -23,32 +23,63 @@ function transform(arr) {
     return arr
   }
   let result = []
-  let elementsToDiscard = []
-  let elementsToDouble = []
-  arr.forEach((item, index) => {
-    if (item === '--discard-next') {
-      elementsToDiscard.push(index + 1)
-    } else if (item === '--discard-prev'){
-      elementsToDiscard.push(index - 1)
-    } else if (item === '--double-next') {
-      elementsToDouble.push(index + 1)
-    } else if ( item === '--double-prev') {
-      elementsToDouble.push(index - 1)
-    } 
-  })
+  let deleteNext = false
+  let deletePrev = false
+  let nextIsDeleted = false
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === '--discard-next') {
+      if (i == arr.length - 1) {
+        continue
+      }
+      deleteNext = true
+    } else if (arr[i] === '--discard-prev'){
+      if(i == 0) {
+        continue
+      }
+      if (nextIsDeleted) {
+        nextIsDeleted = false
+        continue
+      }
+      deletePrev = true
+      arr[i] = 'skip'
+      i = i - 2
+    } else if (arr[i] === '--double-next') {
+      if (i == arr.length - 1) {
+        continue
+      }
+      result.push(arr[i+1])
+    } else if ( arr[i] === '--double-prev') {
+      if(i == 0) {
+        continue
+      }
+      if (nextIsDeleted) {
+        nextIsDeleted = false
+        continue
+      }
+      result.push(arr[i-1])
+    } else {
+      if (arr[i] === 'skip') {
+        continue
+      }
+      if(deleteNext) {
+        deleteNext = false
+        nextIsDeleted = true
+        continue
+      } 
+      if (deletePrev) {
+        deletePrev = false
+        result.pop()
+      } else{
+        
+        result.push(arr[i])
+      }
+    }
 
-  arr.forEach((item,index) => {
-    if (!elementsToDiscard.includes(index) && item !== '--discard-next' && item !== '--discard-prev' && item !== '--double-next' && item !== '--double-prev') {
-      result.push(item)
-    } else if (elementsToDouble.includes(index)) {
-      
-      result.push(item)
-    } 
-
-  })
+  }
+  
   return result
 }
-console.log(transform([1, 2, 3, '--double-next', 1337, '--double-prev', 4, 5]))
+
 
 module.exports = {
   transform

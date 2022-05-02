@@ -18,7 +18,6 @@ const HALF_LIFE_PERIOD = 5730;
  *
  */
 
-console.log(isNaN(+'ACTIVITY OVER 9000'))
 function dateSample(sampleActivity) {
   if (typeof(sampleActivity) !== 'string' || isNaN(+sampleActivity) || +sampleActivity >= MODERN_ACTIVITY || +sampleActivity <= 0) {
     return false
